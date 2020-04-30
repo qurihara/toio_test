@@ -16,51 +16,12 @@ const SPEED = {
   right: [70, 30],
 }
 
-var x=0,y=0,angle=0;
 async function main() {
   // start a scanner to find nearest cube
   const cube = await new NearestScanner().start()
 
   // connect to the cube
   await cube.connect()
-
-  // set listeners to show toio ID information
-  cube
-    .on('id:position-id', data => {
-      // console.log('[POS ID]', data))
-      x = data.x;
-      y = data.y;
-      angle = data.angle;
-      // console.log(x + "," + y + "," +angle); // like 347,158,271
-    })
-    .on('id:standard-id', data => console.log('[STD ID]', data))
-    .on('id:position-id-missed', () => console.log('[POS ID MISSED]'))
-    .on('id:standard-id-missed', () => console.log('[STD ID MISSED]'))
-
-    function rotateRelative(a){
-      let dest = (a + angle) % 360
-      // if (dest <0) dest = 360+dest
-      rotateTo(dest)
-    }
-
-    function rotateTo(a){
-      let vel = 10;
-      let th = 5;
-      // let dx = Math.sign(t.x - x);
-      // let dy = Math.sign(t.y - y);
-      let vec = [0,0];
-      let da = a - angle;
-      console.log("dest: " + a + "cur: " + angle)
-      if (Math.abs(da) < th) return;
-
-      if (da >=0){
-        vec = [vel,-vel]
-      }else{
-        vec = [-vel,vel]
-      }
-      cube.move(...vec, 100)
-      setTimeout(rotateTo, 100,a);
-    }
 
   keypress(process.stdin)
   process.stdin.on('keypress', (ch, key) => {
@@ -98,11 +59,18 @@ async function main() {
           //   timeout: 0x05
           //   //overwrite: true
           // };
-          // a = cube.moveTo(t)//,o)
-          // a = rotateTo(180)//,o)
-          a = rotateRelative(90)//,o)
+          a = cube.moveTo(t)//,o)
           console.log(a)
           break
+          case 't':
+              console.log("time")
+              s = [10,10];
+              cube.move(...s, 0)
+              break
+          case 'r':
+              s = [0,0];
+              cube.move(...s, 100)
+              break
     }
   })
 
