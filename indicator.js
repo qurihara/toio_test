@@ -16,12 +16,28 @@ const SPEED = {
   right: [70, 30],
 }
 
+var first_pos = true;
+var init_pos = [0,0];
 async function main() {
   // start a scanner to find nearest cube
   const cube = await new NearestScanner().start()
 
   // connect to the cube
   await cube.connect()
+
+  // set listeners to show toio ID information
+  cube
+  .on('id:position-id', data => {
+    console.log('[POS ID]', data)
+    if (first_pos){
+      first_pos = false;
+      init_pos = [data.x,data.y,data.angle];
+      console.log(init_pos);
+    }
+  })
+  .on('id:standard-id', data => console.log('[STD ID]', data))
+  .on('id:position-id-missed', () => console.log('[POS ID MISSED]'))
+  .on('id:standard-id-missed', () => console.log('[STD ID MISSED]'))
 
   keypress(process.stdin)
   process.stdin.on('keypress', (ch, key) => {
@@ -30,19 +46,36 @@ async function main() {
       process.exit()
     }
 
+    let o = {
+      moveType: 0x00,
+      maxSpeed: 0x10,
+      speedType: 0x00,
+      timeout: 0x05
+      //overwrite: true
+    };
+
     switch (key.name) {
       case 'up':
-        cube.move(...SPEED.forward, DURATION)
+        tgt = [{
+          x:init_pos[0]+30,
+          y:init_pos[1],
+          angle:0,//init_pos[2],
+          rotateType:2
+        }];
+        cube.moveTo(tgt,o)
         break
       case 'down':
-        cube.move(...SPEED.backward, DURATION)
+        tgt = [{
+          x:init_pos[0]-30,
+          y:init_pos[1],
+          angle:0,//init_pos[2],
+          rotateType:2
+      }];
+      cube.moveTo(tgt,o)
         break
       case 'left':
-        cube.move(...SPEED.left, DURATION)
         break
       case 'right':
-        a = cube.move(...SPEED.right, DURATION)
-        console.log(a)
         break
         case 'i':
             console.log("hello")
@@ -80,20 +113,12 @@ async function main() {
           a = cube.moveTo(t)//,o)
           console.log(a)
           break
-      case 't':
-          console.log("time")
-          s = [10,10];
-          cube.move(...s, 0)
-          break
-      case 'r':
-          s = [0,0];
-          cube.move(...s, 100)
-          break
     }
   })
 
   process.stdin.setRawMode(true)
   process.stdin.resume()
+
 }
 
 main()
