@@ -18,6 +18,7 @@ const SPEED = {
 
 var first_pos = true;
 var init_pos = [0,0];
+var angle = 0;
 async function main() {
   // start a scanner to find nearest cube
   const cube = await new NearestScanner().start()
@@ -59,8 +60,8 @@ async function main() {
         tgt = [{
           x:init_pos[0]+30,
           y:init_pos[1],
-          angle:0,//init_pos[2],
-          rotateType:2
+          angle:angle,//init_pos[2],
+          rotateType:0
         }];
         cube.moveTo(tgt,o)
         break
@@ -68,14 +69,26 @@ async function main() {
         tgt = [{
           x:init_pos[0]-30,
           y:init_pos[1],
-          angle:0,//init_pos[2],
-          rotateType:2
+          angle:angle,//init_pos[2],
+          rotateType:0
       }];
       cube.moveTo(tgt,o)
         break
       case 'left':
+        angle = (angle - 10) % 360 ;
+        tgt = [{
+          angle:angle,//init_pos[2],
+          rotateType:0
+          }];
+        cube.moveTo(tgt,o)
         break
       case 'right':
+        angle = (angle + 10) % 360 ;
+        tgt = [{
+          angle:angle,//init_pos[2],
+          rotateType:0
+          }];
+      cube.moveTo(tgt,o)
         break
         case 'i':
             console.log("hello")
