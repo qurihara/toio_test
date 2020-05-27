@@ -89,9 +89,9 @@ async function main() {
     if (tomFirst || jerryFirst) return;
     let o = {
       moveType: 0x00,
-      maxSpeed: 0x10,
-      speedType: 0x00//,
-      // timeout: 0x0f
+      maxSpeed: 0x0a,
+      speedType: 0x00,
+      timeout: 0x0f
       //overwrite: true
     };
     tgt = [{
